@@ -8,14 +8,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout release
+        uses: actions/checkout@v4
+        with:
+          path: release
+          ref: release
+      - name: Download encrypt soft
+        run: wget https://github.com/valaphee/mcrputil/releases/download/1.2.0/mcrputil
+      - name: encrypt
+        run: mkdir encrypt && rm ./release/.git ./release/.github ./release/.vscode -rf && chmod 700 ./mcrputil && ./mcrputil encrypt -e LICENSE.txt -e sounds/*/* -k ${{secrets.PACK_KEY}} release encrypt && cd encrypt && zip -r ../resource.mcpack *
+      - name: Get version
+        id: tag
+        run: version=$(cat ./release/manifest.json | jq .header.version) && echo "tag=$(echo $version | jq .[0]).$(echo $version | jq .[1]).$(echo $version | jq .[2])" >> $GITHUB_ENV
+      - name: upload encrypted-Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: test
+          files: |
+            resource.mcpack
+            
       - uses: ryand56/r2-upload-action@latest
         with:
           r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
           r2-access-key-id: ${{ secrets.R2_ACCESS_KEY }}
           r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           r2-bucket: ${{ secrets.R2_BUCKET }}
-          source-dir: upload
+          source-dir: resource.mcpack
           destination-dir: ./
           output-file-url: 'true'
       
