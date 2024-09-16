@@ -2,7 +2,7 @@ name: cfr2
 
 on:
   push:
-    branches: [ "main" ]
+    branches: release
   
 jobs:
   build:
