@@ -16,7 +16,7 @@ jobs:
       - name: Download encrypt soft
         run: wget https://github.com/valaphee/mcrputil/releases/download/1.2.0/mcrputil
       - name: encrypt
-        run: mkdir encrypt && rm ./release/.git ./release/.github ./release/.vscode -rf && chmod 700 ./mcrputil && ./mcrputil encrypt -e LICENSE.txt -e sounds/*/* -k ${{secrets.PACK_KEY}} release encrypt && cd encrypt && zip -r ../resource.mcpack *
+        run: mkdir ./release/encrypt && rm ./release/.git ./release/.github ./release/.vscode -rf && chmod 700 ./mcrputil && ./mcrputil encrypt -e LICENSE.txt -e sounds/*/* -k ${{secrets.PACK_KEY}} release encrypt && cd encrypt && zip -r ../resource.mcpack *
       - name: Get version
         id: tag
         run: version=$(cat ./release/manifest.json | jq .header.version) && echo "tag=$(echo $version | jq .[0]).$(echo $version | jq .[1]).$(echo $version | jq .[2])" >> $GITHUB_ENV
